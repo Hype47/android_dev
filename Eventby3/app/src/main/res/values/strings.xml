@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">Eventby 3</string>
+    <string name="tab_text_1">News</string>
+    <string name="tab_text_2">Promo</string>
+    <string name="tab_text_3">Event</string>
+    <string name="tab_text_4">Story</string>
+    <string name="tab_text_5">Alerts</string>
+    <string name="button_text_1">News Location</string>
+    <string name="button_text_2">Read News</string>
+
+
+
+</resources>

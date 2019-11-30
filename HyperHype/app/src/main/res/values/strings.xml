@@ -1,5 +1,8 @@
 <resources>
     <string name="app_name">Hyper Hype</string>
     <string name="action_settings">Settings</string>
-    <string name="seek_bar_text">Radius</string>
+    <string name="location_text">I\'m currently at</string>
+    <string name="look_for">And looking for </string>
+    <string name="seek_bar_text">Within</string>
+
 </resources>

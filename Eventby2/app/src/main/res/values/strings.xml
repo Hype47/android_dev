@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Eventby Experiment</string>
+    <string name="tab_text_1">News</string>
+    <string name="tab_text_2">Promo</string>
+    <string name="tab_text_3">Event</string>
+    <string name="tab_text_4">Story</string>
+</resources>

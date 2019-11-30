@@ -25,6 +25,7 @@ import android.view.MenuItem;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -47,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
     LocationListener locationListener;
     TextView locationText;
     ListView listViewNews;
+
 
     //region Checking if user is giving access to location
     @Override
@@ -114,7 +116,6 @@ public class MainActivity extends AppCompatActivity {
                     Log.i("newsData",newsData);
                     listData.add(newsData);
                 }
-
                 //region News List View
                 listViewNews = findViewById(R.id.listViewNews);
                 ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(MainActivity.this,android.R.layout.simple_list_item_1,listData);
@@ -144,6 +145,45 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        // Code for SeekBar
+        final SeekBar seekBarRadiusWidget;
+        TextView textViewRadiusWidget = (TextView) findViewById(R.id.textViewRadius);
+        seekBarRadiusWidget = findViewById(R.id.seekBarRadius);
+
+        int progressRadius = 10;
+        int maxRadius = 30;
+        seekBarRadiusWidget.setMax(maxRadius);
+        seekBarRadiusWidget.setProgress(progressRadius);
+        textViewRadiusWidget.setText(progressRadius + " km");
+
+
+        seekBarRadiusWidget.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                int minRadius = 1;
+                int barRadius;
+                if ( i < minRadius) {
+                    barRadius = minRadius;
+                    seekBarRadiusWidget.setProgress(minRadius);
+                } else {
+                    barRadius = i;
+                }
+                TextView textViewRadiusWidget = findViewById(R.id.textViewRadius);
+                textViewRadiusWidget.setText(barRadius + " km");
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+
+
         //region Demo Code for ListView
         /* Code for ListView Demo
         ListView friendsListView = findViewById(R.id.listViewNews);
@@ -159,14 +199,18 @@ public class MainActivity extends AppCompatActivity {
          */
         //endregion
 
-        //region Part of getting user location
+        //region Part of getting user Coordinates
         locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
         locationListener = new LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
-                //Log.i("Location", location.toString());
-                locationText = (TextView) findViewById(R.id.textViewLocation);
+                locationText = findViewById(R.id.textViewLocation);
                 locationText.setText("Latitude: " + location.getLatitude() + "\r\n" + "Longitude: " + location.getLongitude());
+                DownloadTask task = new DownloadTask();
+                int radiusKm = seekBarRadiusWidget.getProgress();
+                String endPoint = "https://news-geocode.herokuapp.com/coordinate/";
+                task.execute(endPoint + location.getLatitude() + "," + location.getLongitude() + "," + radiusKm);
+                Log.i("EndPoint",endPoint + location.getLatitude() + "," + location.getLongitude() + "," + radiusKm);
             }
 
             @Override
@@ -191,12 +235,6 @@ public class MainActivity extends AppCompatActivity {
         } else {
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0,locationListener);
         }
-        //endregion
-
-        //region Part of reading JSON file
-        DownloadTask task = new DownloadTask();
-        String cityName = "Jakarta";
-        task.execute("https://news-geocode.herokuapp.com/location/" + cityName);
         //endregion
     }
 
