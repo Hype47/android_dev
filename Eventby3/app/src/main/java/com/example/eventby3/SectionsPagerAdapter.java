@@ -30,6 +30,9 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
             case 0:
                 fragment = new Frag1();
                 break;
+            case 1:
+                fragment = new Frag2();
+                break;
             default:
                 fragment = PlaceholderFragment.newInstance(position + 1);
         }

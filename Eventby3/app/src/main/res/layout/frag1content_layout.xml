@@ -1,92 +1,107 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/linearLayout"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:padding="10dp">
+    android:layout_height="wrap_content">
 
-    <!--<androidx.cardview.widget.CardView -->
-
-    <com.google.android.material.card.MaterialCardView
+    <androidx.cardview.widget.CardView
         android:id="@+id/cardViewNews"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:textSize="20sp">
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="4dp"
+        android:layout_marginBottom="4dp"
+        app:cardCornerRadius="5dp"
+        app:contentPaddingBottom="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <LinearLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/visibleLayout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:layout_height="match_parent">
 
             <TextView
                 android:id="@+id/textLine1"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:textSize="20sp"
-                android:textStyle="bold" />
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/textLine2"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:textSize="12sp" />
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="16dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textLine1" />
 
             <TextView
                 android:id="@+id/textLine3"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="12sp" />
-
-            <View
-                android:id="@+id/dividerDummy1"
                 android:layout_width="0dp"
-                android:layout_height="8dp"
-                android:background="?android:attr/listDivider" />
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="16dp"
+                android:textAppearance="@android:style/TextAppearance.Material.Widget.TextView"
+                android:visibility="visible"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textLine2" />
+
+            <com.google.android.gms.maps.MapView
+                android:id="@+id/mapViewNews"
+                android:layout_width="0dp"
+                android:layout_height="100dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textLine3" />
 
             <View
-                android:id="@+id/divider"
-                android:layout_width="match_parent"
+                android:id="@+id/dividerButton"
+                android:layout_width="wrap_content"
                 android:layout_height="1dp"
-                android:background="?android:attr/listDivider" />
+                android:layout_marginTop="16dp"
+                android:background="?android:attr/listDivider"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/mapViewNews" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal">
+            <Button
+                android:id="@+id/buttonShowMap"
+                style="@android:style/Widget.Material.Button.Borderless.Colored"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/button_text_1"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/dividerButton" />
 
-                <Button
-                    android:id="@+id/buttonShowMap"
-                    style="@style/Widget.AppCompat.Button.Borderless.Colored"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/button_text_1"
-                    android:textColor="@color/design_default_color_primary_dark"
-                    android:textSize="14sp" />
+            <Button
+                android:id="@+id/buttonReadNews"
+                style="@android:style/Widget.Material.Button.Borderless.Colored"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/button_text_2"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/dividerButton" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
-                <!---  ADDED SPACER VIEW -->
-                <View
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    />
-                <!---  ADDED SPACER VIEW -->
-
-
-                <Button
-                    android:id="@+id/buttonReadNews"
-                    style="@style/Widget.AppCompat.Button.Borderless.Colored"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:autoLink="web"
-                    android:text="@string/button_text_2"
-                    android:textColor="@color/design_default_color_primary_dark"
-                    android:textSize="14sp" />
-            </LinearLayout>
-
-        </LinearLayout>
-
-    <!--</androidx.cardview.widget.CardView>-->
-    </com.google.android.material.card.MaterialCardView>
-
-
-</LinearLayout>
+    </androidx.cardview.widget.CardView>
+</androidx.constraintlayout.widget.ConstraintLayout>
