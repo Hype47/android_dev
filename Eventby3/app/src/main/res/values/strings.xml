@@ -5,11 +5,15 @@
     <string name="tab_text_3">Event</string>
     <string name="tab_text_4">Story</string>
     <string name="tab_text_5">Alerts</string>
-    <string name="button_text_1">See Location</string>
+    <string name="button_text_1">Go To Location</string>
     <string name="button_text_1A">Collapse</string>
-    <string name="button_text_2">Read News</string>
-    <string name="text_content_dummy">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</string>
+    <string name="button_text_2">Read More</string>
+    <string name="text_content_dummy">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+        Ut enim ad minim veniam, quis nostrud exercitationullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
+        velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</string>
     <string name="button_refresh">Refresh</string>
+    <string name="button_read_more">Read More</string>
+    <string name="button_other_news">Nearby News</string>
 
 
 </resources>

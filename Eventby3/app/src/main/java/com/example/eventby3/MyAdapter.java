@@ -4,6 +4,7 @@ package com.example.eventby3;
 
 import android.content.Context;
 import android.content.Intent;
+import android.location.Location;
 import android.net.Uri;
 import android.transition.AutoTransition;
 import android.transition.TransitionManager;
@@ -16,6 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.cardview.widget.CardView;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.maps.MapView;
@@ -31,36 +33,38 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
 
     private LayoutInflater mInflater;
     private JSONArray mDataset;
+    Frag1 frag1;
+
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
     // you provide access to all the views for a data item in a view holder
     // stores and recycles views as they are scrolled off screen
     public class ViewHolder extends RecyclerView.ViewHolder {
-        TextView textView1, textView2, textView3;
+        TextView textView1, textView2, textView3, textView4;
         Button buttonView, buttonViewMap;
         CardView cardViewNews;
-        ViewGroup expandableLayout;
-        MapView mapViewNews;
+        View dividerTop;
         ViewHolder(View view) {
             super(view);
             textView1 = view.findViewById(R.id.textLine1);
             textView2 = view.findViewById(R.id.textLine2);
             textView3 = view.findViewById(R.id.textLine3);
+            textView4 = view.findViewById(R.id.textLine4);
             buttonView = view.findViewById(R.id.buttonReadNews);
             buttonViewMap = view.findViewById(R.id.buttonShowMap);
             cardViewNews = view.findViewById(R.id.cardViewNews);
-            mapViewNews = view.findViewById(R.id.mapViewNews);
-            //expandableLayout = view.findViewById(R.id.expandableLayout);
+            dividerTop = view.findViewById(R.id.dividerTop);
 
         }
     }
 
 
     // data is passed into the constructor
-    MyAdapter(Context context, JSONArray newsData) {
+    MyAdapter(Context context, JSONArray newsData, Frag1 fragment) {
         this.mInflater = LayoutInflater.from(context);
         this.mDataset = newsData;
+        this.frag1 = fragment;
     }
 
     // inflates the row layout from xml when needed
@@ -76,15 +80,33 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         // Set initial visibility
-        holder.textView3.setVisibility(View.GONE);
-        holder.mapViewNews.setVisibility(View.GONE);
+        holder.textView2.setVisibility(View.GONE);
+        holder.textView4.setVisibility(View.GONE);
+        holder.dividerTop.setVisibility(View.GONE);
+        holder.buttonView.setVisibility(View.GONE);
+
+        // Get User location
+        Location userCoord = frag1.getGPS();
+        final double userLat = userCoord.getLatitude();
+        final double userLon = userCoord.getLongitude();
+
 
        try {
+            final double lat = mDataset.getJSONObject(position).getDouble("lat");
+            final double lon = mDataset.getJSONObject(position).getDouble("lon");
+            final String newsLocation = lat + "," + lon;
             final String url = mDataset.getJSONObject(position).getString("url");
-            holder.textView1.setText(mDataset.getJSONObject(position).getString("title"));
-            holder.textView2.setText(mDataset.getJSONObject(position).getString("date"));
-            holder.textView3.setText(mDataset.getJSONObject(position).getString("snips"));
+            final String title = mDataset.getJSONObject(position).getString("title");
+            final String date = mDataset.getJSONObject(position).getString("date");
+            final String snips = mDataset.getJSONObject(position).getString("snips");
 
+
+            holder.textView1.setText(title);
+            holder.textView2.setText(date);
+            holder.textView3.setText("News @" + newsLocation);
+            holder.textView4.setText(snips);
+
+            /*
             //region Go to news Link button
             holder.buttonView.setOnClickListener(new View.OnClickListener(){
                 @Override
@@ -93,29 +115,73 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
                     Context context = view.getContext();
                     Intent intent = new Intent(Intent.ACTION_VIEW,uriUrl);
                     context.startActivity(intent);
-
                 }
             });
             //endregion
 
+             */
+
+/*
             //region Expand/Collapse card
+            holder.cardViewNews.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Context context = view.getContext();
+                    Intent intent = new Intent(context, NewsLocationActivity.class);
+                    // Passing values
+                    intent.putExtra("lat",lat);
+                    intent.putExtra("lon",lon);
+                    intent.putExtra("title",title);
+                    intent.putExtra("date",date);
+                    intent.putExtra("snips",snips);
+                    intent.putExtra("url",url);
+                    context.startActivity(intent);
+                }
+                /*
+               @Override
+               public void onClick(View view) {
+                   if (holder.textView4.getVisibility()==View.GONE){
+                       TransitionManager.beginDelayedTransition(holder.cardViewNews, new AutoTransition());
+                       holder.textView2.setVisibility(View.VISIBLE);
+                       holder.textView4.setVisibility(View.VISIBLE);
+                       holder.dividerTop.setVisibility(View.VISIBLE);
+                   } else {
+                       //TransitionManager.beginDelayedTransition(holder.cardViewNews, new AutoTransition());
+                       holder.textView2.setVisibility(View.GONE);
+                       holder.textView4.setVisibility(View.GONE);
+                       holder.dividerTop.setVisibility(View.GONE);
+                   }
+               }
+
+
+           });
+           //endregion
+
+ */
+
+
+           //region Press Button to goto Map
            holder.buttonViewMap.setOnClickListener(new View.OnClickListener() {
                @Override
                public void onClick(View view) {
-                   if (holder.textView3.getVisibility()==View.GONE){
-                       TransitionManager.beginDelayedTransition(holder.cardViewNews, new AutoTransition());
-                       holder.textView3.setVisibility(View.VISIBLE);
-                       holder.mapViewNews.setVisibility(View.VISIBLE);
-                       holder.buttonViewMap.setText(R.string.button_text_1A);
-                   } else {
-                       //TransitionManager.beginDelayedTransition(holder.cardViewNews, new AutoTransition());
-                       holder.textView3.setVisibility(View.GONE);
-                       holder.mapViewNews.setVisibility(View.GONE);
-                       holder.buttonViewMap.setText(R.string.button_text_1);
-                   }
+                   Context context = view.getContext();
+                   Intent intent = new Intent(context, NewsLocationActivity.class);
+                   // Passing values
+                   intent.putExtra("lat",lat);
+                   intent.putExtra("lon",lon);
+                   intent.putExtra("title",title);
+                   intent.putExtra("date",date);
+                   intent.putExtra("snips",snips);
+                   intent.putExtra("url",url);
+                   intent.putExtra("userLat",userLat);
+                   intent.putExtra("userLon",userLon);
+                   Log.i("User Coordinate", userLat +"," + userLon);
+                   context.startActivity(intent);
                }
            });
            //endregion
+
+
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -124,7 +190,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
     // Return the size of your itemsData (invoked by the layout manager)
     @Override
     public int getItemCount() {
-        //return mDataset.size();
         return mDataset.length();
     }
+
 }

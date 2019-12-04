@@ -18,10 +18,20 @@ import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.MapsInitializer;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -43,8 +53,6 @@ public class Frag1 extends Fragment {
     LocationManager locationManager;
     LocationListener locationListener;
 
-
-
     //region Checking if user is giving access to location
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -57,8 +65,6 @@ public class Frag1 extends Fragment {
         }
     }
     //endregion
-
-
 
 
     //region Read JSON File - Don't forget to give internet permission
@@ -108,7 +114,7 @@ public class Frag1 extends Fragment {
                 recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
                 // 3. create an adapter
-                MyAdapter mAdapter = new MyAdapter(getActivity(), arr);
+                MyAdapter mAdapter = new MyAdapter(getActivity(), arr, Frag1.this);
                 /*
                 ArrayList<String> arr2 = new ArrayList<>();
                 arr2.add("Mark");
@@ -139,7 +145,7 @@ public class Frag1 extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        //region Displaying Card in RecyclerView
+        // Retrieving Views in Fragments
         rootView = inflater.inflate(R.layout.frag1_layout, container, false);
 
         /*
@@ -157,7 +163,6 @@ public class Frag1 extends Fragment {
         listData.add("Crocodile");
         listData.add("Turtle");
         //endregion
-
          */
 
         JSONArray listData = new JSONArray();
@@ -170,7 +175,7 @@ public class Frag1 extends Fragment {
 
         // 3. create an adapter
         //MyAdapter mAdapter = new MyAdapter(getActivity(), listData);
-        MyAdapter mAdapter = new MyAdapter(getContext(), listData);
+        MyAdapter mAdapter = new MyAdapter(getContext(), listData, Frag1.this);
 
         // 4. set adapter
         recyclerView.setAdapter(mAdapter);
@@ -182,6 +187,7 @@ public class Frag1 extends Fragment {
 
         //region Floating Button
         FloatingActionButton fab = rootView.findViewById(R.id.floatingButtonRefresh);
+        final Location coord = getGPS();
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -192,21 +198,19 @@ public class Frag1 extends Fragment {
                 //String endPoint = "https://news-geocode.herokuapp.com/location/Karawang";
                 //task.execute(endPoint);
                 //Log.i("endpoint", endPoint);
-                Location coord = getGPS();
+                //Location coord = getGPS();
                 int radiusKm = 20;
                 String endPoint = "https://news-geocode.herokuapp.com/coordinate/";
                 task.execute(endPoint + coord.getLatitude() + "," + coord.getLongitude() + "," + radiusKm);
                 Log.i("EndPoint",endPoint + coord.getLatitude() + "," + coord.getLongitude() + "," + radiusKm);
-
             }
         });
-
         //endregion
         return rootView;
     }
 
     // Getting adHoc user Locations
-    private Location getGPS() {
+    public Location getGPS() {
         LocationManager locationManager = (LocationManager) Frag1.this.getContext().getSystemService(Context.LOCATION_SERVICE);
         List<String> providers = locationManager.getProviders(true);
 
@@ -246,6 +250,8 @@ public class Frag1 extends Fragment {
             gps = locationManager.getLastKnownLocation(providers.get(i));
             if (gps != null) break;
         }
+
+
 
         return gps;
     }
