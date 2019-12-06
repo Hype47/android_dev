@@ -1,7 +1,14 @@
 package com.example.eventby3;
 
+/*
+public class Frag3 {
+}
+
+ */
+
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
@@ -31,20 +38,27 @@ import org.json.JSONObject;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.Inet4Address;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
 /*
-    Fragment for News Tab
+    Fragment for Neighborhood Tab
  */
 
-public class Frag1 extends Fragment {
+public class Frag3 extends Fragment {
 
     // Variable declarations
     private View rootView;
     private LocationManager locationManager;
     private LocationListener locationListener;
 
+    // Location variables should be retrieved from user settings
+    private double userLat = -6.2162781; // Taman Rasuna
+    private double userLon = 106.8350133;
+    private int radiusKm = 20;
+/*
     //region Checking if user is giving access to location
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -57,6 +71,8 @@ public class Frag1 extends Fragment {
         }
     }
     //endregion
+
+ */
 
 
     //region Read JSON File - Don't forget to give internet permission
@@ -96,19 +112,20 @@ public class Frag1 extends Fragment {
                 JSONObject jsonObject = new JSONObject(s);
 
                 // Getting the JSON contents
-                String newsInfo = jsonObject.getString("location");
+                String newsInfo = jsonObject.getString("neighborhood_posts");
                 JSONArray arr = new JSONArray(newsInfo);
 
                 // 1. get a reference to recyclerView
-                RecyclerView recyclerView = rootView.findViewById(R.id.recyclerViewNews);
+                RecyclerView recyclerView = rootView.findViewById(R.id.recyclerViewNeighborhood);
 
                 // 2. set layoutManger
                 recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
                 // 3. create an adapter
-                MyAdapter mAdapter = new MyAdapter(getActivity(), arr, Frag1.this);
-                /*
-                ArrayList<String> arr2 = new ArrayList<>();
+                MyNeighborhoodAdapter mAdapter = new MyNeighborhoodAdapter(getActivity(),arr,Frag3.this);
+
+
+                /*ArrayList<String> arr2 = new ArrayList<>();
                 arr2.add("Mark");
                 arr2.add("Tony");
                 arr2.add("Peter");
@@ -116,8 +133,8 @@ public class Frag1 extends Fragment {
                 arr2.add("Thor");
                 arr2.add("Natasya");
                 arr2.add("Stephen");
-                MyAdapter mAdapter = new MyAdapter(getContext(), arr2);
-                 */
+                MyAdapter mAdapter = new MyAdapter(getContext(), arr2);*/
+
 
                 // 4. set adapter
                 recyclerView.setAdapter(mAdapter);
@@ -133,15 +150,16 @@ public class Frag1 extends Fragment {
     //endregion
 
 
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         // Retrieving Views in Fragments
-        rootView = inflater.inflate(R.layout.frag1_layout, container, false);
+        rootView = inflater.inflate(R.layout.frag3_layout, container, false);
 
-        /*
-        //region Dummy data for testing
+
+        /*//region Dummy data for testing
         // data to populate the RecyclerView with
         ArrayList<String> listData = new ArrayList<>();
         listData.add("Horse");
@@ -154,20 +172,20 @@ public class Frag1 extends Fragment {
         listData.add("Pig");
         listData.add("Crocodile");
         listData.add("Turtle");
-        //endregion
-         */
+        //endregion*/
+
 
         JSONArray listData = new JSONArray();
 
         // 1. get a reference to recyclerView
-        RecyclerView recyclerView = rootView.findViewById(R.id.recyclerViewNews);
+        RecyclerView recyclerView = rootView.findViewById(R.id.recyclerViewNeighborhood);
 
         // 2. set layoutManager
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         // 3. create an adapter
-        //MyAdapter mAdapter = new MyAdapter(getActivity(), listData);
-        MyAdapter mAdapter = new MyAdapter(getContext(), listData, Frag1.this);
+        MyNeighborhoodAdapter mAdapter = new MyNeighborhoodAdapter(getActivity(), listData, Frag3.this);
+        //MyAdapter mAdapter = new MyAdapter(getContext(), listData, Frag1.this);
 
         // 4. set adapter
         recyclerView.setAdapter(mAdapter);
@@ -175,33 +193,32 @@ public class Frag1 extends Fragment {
         // 5. set item animator to DefaultAnimator
         recyclerView.setItemAnimator(new DefaultItemAnimator());
 
-        //region Floating Button
-        FloatingActionButton fab = rootView.findViewById(R.id.floatingNewsRefresh);
-        final Location coord = getGPS();
+        DownloadTask task = new DownloadTask();
+        String endPoint = "https://news-geocode.herokuapp.com/neighborhood_coord/";
+        task.execute(endPoint + userLat + "," + userLon + "," + radiusKm);
+        Log.i("EndPoint",endPoint + userLat + "," + userLon + "," + radiusKm);
+
+
+        //region Floating Button : Move to create post screen
+        FloatingActionButton fab = rootView.findViewById(R.id.floatingCreatePost);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Retrieving local news...", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+//                Snackbar.make(view, "Retrieving local news...", Snackbar.LENGTH_LONG)
+//                        .setAction("Action", null).show();
 
-                DownloadTask task = new DownloadTask();
-                //String endPoint = "https://news-geocode.herokuapp.com/location/Karawang";
-                //task.execute(endPoint);
-                //Log.i("endpoint", endPoint);
-                //Location coord = getGPS();
-                int radiusKm = 20;
-                String endPoint = "https://news-geocode.herokuapp.com/coordinate/";
-                task.execute(endPoint + coord.getLatitude() + "," + coord.getLongitude() + "," + radiusKm);
-                Log.i("EndPoint",endPoint + coord.getLatitude() + "," + coord.getLongitude() + "," + radiusKm);
+                Intent intent = new Intent(getContext(), CreatePostActivity.class);
+                getContext().startActivity(intent);
             }
         });
         //endregion
+
         return rootView;
     }
 
-    // Getting adHoc user Locations
+    /*// Getting adHoc user Locations
     public Location getGPS() {
-        LocationManager locationManager = (LocationManager) Frag1.this.getContext().getSystemService(Context.LOCATION_SERVICE);
+        LocationManager locationManager = (LocationManager) Frag3.this.getContext().getSystemService(Context.LOCATION_SERVICE);
         List<String> providers = locationManager.getProviders(true);
 
         locationListener = new LocationListener() {
@@ -233,7 +250,7 @@ public class Frag1 extends Fragment {
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0,locationListener);
         }
 
-        /* Loop over the array backwards, and if you get an accurate location, then break out the loop*/
+        *//* Loop over the array backwards, and if you get an accurate location, then break out the loop*//*
         Location gps = null;
 
         for (int i=providers.size()-1; i>=0; i--) {
@@ -242,5 +259,5 @@ public class Frag1 extends Fragment {
         }
 
         return gps;
-    }
+    }*/
 }

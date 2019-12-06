@@ -12,8 +12,15 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <meta-data android:name="com.google.android.geo.API_KEY" android:value="AIzaSyDJu6Lp-f-PrdFdaRXc0VK6RkWjuml_exc"/>
-        <activity android:name=".NewsLocationActivity"></activity>
+        <activity android:name=".CreatePostActivity"></activity>
+        <activity android:name=".NeighborhoodLocationActivity" />
+        <activity android:name=".EventLocationActivity" />
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyDJu6Lp-f-PrdFdaRXc0VK6RkWjuml_exc" />
+
+        <activity android:name=".NewsLocationActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -10,10 +10,10 @@
         android:id="@+id/cardViewTop2"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="300dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="150dp"
         app:cardCornerRadius="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -21,18 +21,19 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <com.google.android.gms.maps.MapView
-            android:id="@+id/mapViewEvent"
+            android:id="@+id/mapViewEvent2"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
     </androidx.cardview.widget.CardView>
 
     <androidx.cardview.widget.CardView
+        android:id="@+id/cardViewBottom2"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
         app:cardCornerRadius="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -41,10 +42,10 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="269dp">
+            android:layout_height="match_parent">
 
             <TextView
-                android:id="@+id/textEventTitle"
+                android:id="@+id/textEventTitle2"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
@@ -57,14 +58,14 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:id="@+id/textEventDate"
+                android:id="@+id/textEventDate2"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:textSize="12sp"
-                app:layout_constraintEnd_toEndOf="@+id/textEventTitle"
-                app:layout_constraintStart_toStartOf="@+id/textEventTitle"
-                app:layout_constraintTop_toBottomOf="@+id/textEventTitle" />
+                app:layout_constraintEnd_toEndOf="@+id/textEventTitle2"
+                app:layout_constraintStart_toStartOf="@+id/textEventTitle2"
+                app:layout_constraintTop_toBottomOf="@+id/textEventTitle2" />
 
             <View
                 android:id="@+id/divider2"
@@ -72,29 +73,28 @@
                 android:layout_height="1dp"
                 android:layout_marginTop="8dp"
                 android:background="?android:attr/listDivider"
-                app:layout_constraintEnd_toEndOf="@+id/textEventDate"
-                app:layout_constraintStart_toStartOf="@+id/textEventDate"
-                app:layout_constraintTop_toBottomOf="@+id/textEventDate" />
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="@+id/textEventDate2"
+                app:layout_constraintStart_toStartOf="@+id/textEventDate2"
+                app:layout_constraintTop_toBottomOf="@+id/textEventDate2" />
 
             <TextView
-                android:id="@+id/textEventSnips"
+                android:id="@+id/textEventSnips2"
                 android:layout_width="0dp"
-                android:layout_height="0dp"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:scrollbars="vertical"
-                android:textSize="16sp"
-                android:verticalScrollbarPosition="defaultPosition"
-                app:layout_constraintBottom_toTopOf="@+id/buttonReadMore"
+                android:visibility="gone"
+                app:layout_constraintBottom_toTopOf="@+id/buttonGoogleSearch"
                 app:layout_constraintEnd_toEndOf="@+id/divider2"
                 app:layout_constraintStart_toStartOf="@+id/divider2"
                 app:layout_constraintTop_toBottomOf="@+id/divider2" />
 
             <Button
-                android:id="@+id/buttonReadMore"
+                android:id="@+id/buttonGoogleSearch"
                 style="@android:style/Widget.Material.Button.Borderless.Colored"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/button_read_more"
+                android:text="@string/button_google_search"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />
 
@@ -103,9 +103,9 @@
                 style="@android:style/Widget.Material.Button.Borderless.Colored"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/button_other_news"
+                android:text="@string/button_other_events"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/buttonReadMore" />
+                app:layout_constraintStart_toEndOf="@+id/buttonGoogleSearch" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
 </androidx.constraintlayout.widget.ConstraintLayout>
