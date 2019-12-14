@@ -154,7 +154,7 @@ public class NeighborhoodLocationActivity extends AppCompatActivity implements O
     @Override
     public void onMapReady(GoogleMap googleMap) {
         GoogleMap gmap = googleMap;
-        gmap.setMinZoomPreference(12);
+        gmap.setMinZoomPreference(15);
         //LatLng place = new LatLng(40.7143528, -74.0059731);
         LatLng place = new LatLng(lat,lon);
 //        LatLng userPlace = new LatLng(userLat,userLon);

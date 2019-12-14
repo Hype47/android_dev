@@ -7,6 +7,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -22,12 +23,17 @@ import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
@@ -41,9 +47,12 @@ import java.util.List;
 public class Frag1 extends Fragment {
 
     // Variable declarations
+    public static int radiusKm = 20;
     private View rootView;
     private LocationManager locationManager;
     private LocationListener locationListener;
+    private Location coord, gps;
+    final String endPoint = "https://news-geocode.herokuapp.com/coordinate/";
 
     //region Checking if user is giving access to location
     @Override
@@ -80,9 +89,15 @@ public class Frag1 extends Fragment {
                     data = reader.read();
                 }
                 return result;
-
+            } catch (FileNotFoundException f) {
+                Log.i("Data error","Data not found");
+//                Snackbar.make(getView(), "No news found for this location...", Snackbar.LENGTH_LONG)
+//                        .setAction("Action", null).show();
+                return null;
             } catch (Exception e){
                 e.printStackTrace();
+//                Snackbar.make(getView(), "No news found for this location...", Snackbar.LENGTH_LONG)
+//                        .setAction("Action", null).show();
                 return null;
             }
         }
@@ -93,6 +108,8 @@ public class Frag1 extends Fragment {
 
             // Working on the JSON object & extract the information
             try {
+//                Log.i("JSON String",s);
+
                 JSONObject jsonObject = new JSONObject(s);
 
                 // Getting the JSON contents
@@ -127,6 +144,7 @@ public class Frag1 extends Fragment {
 
             } catch (Exception e) {
                 e.printStackTrace();
+
             }
         }
     }
@@ -175,24 +193,32 @@ public class Frag1 extends Fragment {
         // 5. set item animator to DefaultAnimator
         recyclerView.setItemAnimator(new DefaultItemAnimator());
 
+        // Getting last location
+        coord = getGPS();
+        DownloadTask task = new DownloadTask();
+        task.execute(endPoint + coord.getLatitude() + "," + coord.getLongitude() + "," + radiusKm);
+        Log.i("EndPoint",endPoint + coord.getLatitude() + "," + coord.getLongitude() + "," + radiusKm);
+
+
         //region Floating Button
         FloatingActionButton fab = rootView.findViewById(R.id.floatingNewsRefresh);
-        final Location coord = getGPS();
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Snackbar.make(view, "Retrieving local news...", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
 
+                // Getting current location at a press of floating button
+                coord = getGPS();
                 DownloadTask task = new DownloadTask();
-                //String endPoint = "https://news-geocode.herokuapp.com/location/Karawang";
-                //task.execute(endPoint);
-                //Log.i("endpoint", endPoint);
-                //Location coord = getGPS();
-                int radiusKm = 20;
-                String endPoint = "https://news-geocode.herokuapp.com/coordinate/";
-                task.execute(endPoint + coord.getLatitude() + "," + coord.getLongitude() + "," + radiusKm);
-                Log.i("EndPoint",endPoint + coord.getLatitude() + "," + coord.getLongitude() + "," + radiusKm);
+                try {
+                    task.execute(endPoint + coord.getLatitude() + "," + coord.getLongitude() + "," + radiusKm);
+                    Log.i("EndPoint",endPoint + coord.getLatitude() + "," + coord.getLongitude() + "," + radiusKm);
+                } catch (Exception e) {
+                    Log.i("Endpoint error",e.toString());
+                }
+
+
             }
         });
         //endregion
@@ -200,8 +226,9 @@ public class Frag1 extends Fragment {
     }
 
     // Getting adHoc user Locations
+//    public void getGPS() {
     public Location getGPS() {
-        LocationManager locationManager = (LocationManager) Frag1.this.getContext().getSystemService(Context.LOCATION_SERVICE);
+        locationManager = (LocationManager) Frag1.this.getContext().getSystemService(Context.LOCATION_SERVICE);
         List<String> providers = locationManager.getProviders(true);
 
         locationListener = new LocationListener() {

@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import org.json.JSONArray;
 import org.json.JSONException;
 
+import java.text.DecimalFormat;
 import java.util.List;
 
 public class MyPromoAdapter extends RecyclerView.Adapter<MyPromoAdapter.ViewHolder> {
@@ -80,7 +81,6 @@ public class MyPromoAdapter extends RecyclerView.Adapter<MyPromoAdapter.ViewHold
         try {
             final double lat = mDataset.getJSONObject(position).getDouble("lat");
             final double lon = mDataset.getJSONObject(position).getDouble("lon");
-            final String newsLocation = "News @" + lat + "," + lon;
             //final String url = mDataset.getJSONObject(position).getString("url");
             final String title = mDataset.getJSONObject(position).getString("title");
             final String date = mDataset.getJSONObject(position).getString("startdate");
@@ -88,63 +88,26 @@ public class MyPromoAdapter extends RecyclerView.Adapter<MyPromoAdapter.ViewHold
             String period = date + " - " + enddate;
             //final String snips = mDataset.getJSONObject(position).getString("snips");
 
+            // Calculate distance between news and user
+            Location newsPosition = new Location("");
+            newsPosition.setLatitude(lat);
+            newsPosition.setLongitude(lon);
+            double distanceInMeter = newsPosition.distanceTo(userCoord);
+            DecimalFormat df = new DecimalFormat("#.00");
+            String newsLocation;
+            if (distanceInMeter < 1000){
+                newsLocation = df.format(distanceInMeter) + " meter from your location";
+            } else {
+                newsLocation = df.format(distanceInMeter/1000) + " km from your location";
+            }
+
+            // Display data onScreen
             holder.textLine1.setText(title);
             holder.textLine2.setText(period);
-            holder.textLine3.setText(newsLocation);
+            holder.textLine3.setText("Promo and Event @" + newsLocation);
             //holder.textView4.setText(snips);
 
-            /*
-            //region Go to news Link button
-            holder.buttonView.setOnClickListener(new View.OnClickListener(){
-                @Override
-                public void onClick(View view) {
-                    Uri uriUrl = Uri.parse(url);
-                    Context context = view.getContext();
-                    Intent intent = new Intent(Intent.ACTION_VIEW,uriUrl);
-                    context.startActivity(intent);
-                }
-            });
-            //endregion
 
-             */
-
-/*
-            //region Expand/Collapse card
-            holder.cardViewNews.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Context context = view.getContext();
-                    Intent intent = new Intent(context, NewsLocationActivity.class);
-                    // Passing values
-                    intent.putExtra("lat",lat);
-                    intent.putExtra("lon",lon);
-                    intent.putExtra("title",title);
-                    intent.putExtra("date",date);
-                    intent.putExtra("snips",snips);
-                    intent.putExtra("url",url);
-                    context.startActivity(intent);
-                }
-                /*
-               @Override
-               public void onClick(View view) {
-                   if (holder.textView4.getVisibility()==View.GONE){
-                       TransitionManager.beginDelayedTransition(holder.cardViewNews, new AutoTransition());
-                       holder.textView2.setVisibility(View.VISIBLE);
-                       holder.textView4.setVisibility(View.VISIBLE);
-                       holder.dividerTop.setVisibility(View.VISIBLE);
-                   } else {
-                       //TransitionManager.beginDelayedTransition(holder.cardViewNews, new AutoTransition());
-                       holder.textView2.setVisibility(View.GONE);
-                       holder.textView4.setVisibility(View.GONE);
-                       holder.dividerTop.setVisibility(View.GONE);
-                   }
-               }
-
-
-           });
-           //endregion
-
- */
             //region Press Button to goto Map
             holder.buttonViewMap.setOnClickListener(new View.OnClickListener() {
                 @Override

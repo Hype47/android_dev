@@ -4,6 +4,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.SearchManager;
 import android.content.Intent;
+import android.location.Address;
+import android.location.Geocoder;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
@@ -18,6 +20,9 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+
+import java.util.List;
+import java.util.Locale;
 
 
 /*
@@ -169,10 +174,24 @@ public class EventLocationActivity extends AppCompatActivity implements OnMapRea
         LatLng place = new LatLng(lat,lon);
         LatLng userPlace = new LatLng(userLat,userLon);
 
+        // Get location information from a set of coordinates
+        Geocoder geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
+        String newsLocation = " ";
+        try {
+            List<Address> listAddresses = geocoder.getFromLocation(place.latitude,place.longitude,2);
+
+            // Show the location in Text
+            if (listAddresses != null && listAddresses.size() > 0){
+                newsLocation = listAddresses.get(0).getAddressLine(0);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         // News Marker
         newsMarker = gmap.addMarker(new MarkerOptions()
                 .position(place).title(title)
-                .snippet("@" + place.toString())
+                .snippet(newsLocation)
                 .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
         gmap.moveCamera(CameraUpdateFactory.newLatLng(place));
         newsMarker.showInfoWindow();

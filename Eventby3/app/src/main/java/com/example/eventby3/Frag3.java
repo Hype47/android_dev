@@ -1,11 +1,5 @@
 package com.example.eventby3;
 
-/*
-public class Frag3 {
-}
-
- */
-
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
@@ -55,9 +49,9 @@ public class Frag3 extends Fragment {
     private LocationListener locationListener;
 
     // Location variables should be retrieved from user settings
-    private double userLat = -6.2162781; // Taman Rasuna
-    private double userLon = 106.8350133;
-    private int radiusKm = 20;
+    public static double userLat = -6.2162781; // Taman Rasuna
+    public static double userLon = 106.8350133;
+    private int radiusKm = 10;
 /*
     //region Checking if user is giving access to location
     @Override
@@ -99,6 +93,8 @@ public class Frag3 extends Fragment {
 
             } catch (Exception e){
                 e.printStackTrace();
+//                Snackbar.make(getView(), "No stories found for this location...", Snackbar.LENGTH_LONG)
+//                        .setAction("Action", null).show();
                 return null;
             }
         }
@@ -154,6 +150,9 @@ public class Frag3 extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+
+//        this.userLat = -6.2162781; // Taman Rasuna
+//        this.userLon = 106.8350133;
 
         // Retrieving Views in Fragments
         rootView = inflater.inflate(R.layout.frag3_layout, container, false);
@@ -260,4 +259,13 @@ public class Frag3 extends Fragment {
 
         return gps;
     }*/
+
+
+    public double getLat(){
+        return this.userLat;
+    }
+
+    public double getLon(){
+        return this.userLon;
+    }
 }

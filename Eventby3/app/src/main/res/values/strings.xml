@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">EventHood</string>
+    <string name="app_name">Eventhood</string>
 
     <!-- Tab Names -->
     <string name="tab_text_1">News</string>
@@ -21,11 +21,27 @@
     <string name="button_other_events">Other Events</string>
 
     <!-- Create Post Screen -->
+    <string name="post_bar_title">Create Story</string>
     <string name="post_button_post">Post</string>
     <string name="post_button_clear">Clear</string>
     <string name="post_button_cancel">Cancel</string>
+    <string name="chip_current_loc">Current Location</string>
+    <string name="chip_default_loc">Default Location</string>
+    <string name="chip_private">Private</string>
+    <string name="chip_neighborhood">Neighborhood</string>
+    <string name="chip_public">Public</string>
 
+    <!-- User Registration Screen -->
+    <string name="register_bar_title">User Registration</string>
+    <string name="btn_signup">Sign Up</string>
 
+    <!-- User Login Screen -->
+    <string name="login_title">User Login</string>
+    <string name="email_input_hint">Registered email</string>
+    <string name="password_input_hint">Password</string>
+    <string name="login_button_label">Login</string>
+    <string name="cancel_button_label">Cancel</string>
+    <string name="to_registration_label">Sign Up</string>
 
 
     <!-- Dummy Contents -->

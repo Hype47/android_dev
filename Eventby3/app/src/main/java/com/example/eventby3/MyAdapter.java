@@ -21,10 +21,13 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.maps.MapView;
+import com.google.android.material.snackbar.Snackbar;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 
+import java.io.FileNotFoundException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -80,50 +83,51 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         // Set initial visibility
-        holder.textView2.setVisibility(View.GONE);
+        holder.textView2.setVisibility(View.VISIBLE);
         holder.textView4.setVisibility(View.GONE);
         holder.dividerTop.setVisibility(View.GONE);
         holder.buttonView.setVisibility(View.GONE);
 
         // Get User location
-        Location userCoord = frag1.getGPS();
+        final Location userCoord = frag1.getGPS();
         final double userLat = userCoord.getLatitude();
         final double userLon = userCoord.getLongitude();
 
-
-       try {
+        try {
             final double lat = mDataset.getJSONObject(position).getDouble("lat");
             final double lon = mDataset.getJSONObject(position).getDouble("lon");
-            final String newsLocation = lat + "," + lon;
+            //final String newsLocation = lat + "," + lon;
             final String url = mDataset.getJSONObject(position).getString("url");
             final String title = mDataset.getJSONObject(position).getString("title");
             final String date = mDataset.getJSONObject(position).getString("date");
             final String snips = mDataset.getJSONObject(position).getString("snips");
 
+            // Calculate distance between news and user
+            Location newsPosition = new Location("");
+            newsPosition.setLatitude(lat);
+            newsPosition.setLongitude(lon);
+            double distanceInMeter = newsPosition.distanceTo(userCoord);
+            DecimalFormat df = new DecimalFormat("#.00");
+            String newsLocation;
+            if (distanceInMeter < 1000){
+                newsLocation = df.format(distanceInMeter) + " meter from your location";
+            } else {
+                newsLocation = df.format(distanceInMeter/1000) + " km from your location";
+            }
 
+            Snackbar.make(frag1.getView(), "Displaying news...", Snackbar.LENGTH_SHORT)
+                    .setAction("Action", null).show();
+
+            // Display on screen
             holder.textView1.setText(title);
             holder.textView2.setText(date);
             holder.textView3.setText("News @" + newsLocation);
             holder.textView4.setText(snips);
 
-            /*
-            //region Go to news Link button
-            holder.buttonView.setOnClickListener(new View.OnClickListener(){
-                @Override
-                public void onClick(View view) {
-                    Uri uriUrl = Uri.parse(url);
-                    Context context = view.getContext();
-                    Intent intent = new Intent(Intent.ACTION_VIEW,uriUrl);
-                    context.startActivity(intent);
-                }
-            });
-            //endregion
 
-             */
 
-/*
-            //region Expand/Collapse card
-            holder.cardViewNews.setOnClickListener(new View.OnClickListener() {
+            //region Press Button to goto Map
+            holder.buttonViewMap.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     Context context = view.getContext();
@@ -135,52 +139,13 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
                     intent.putExtra("date",date);
                     intent.putExtra("snips",snips);
                     intent.putExtra("url",url);
+                    intent.putExtra("userLat",userLat);
+                    intent.putExtra("userLon",userLon);
+                    Log.i("User Coordinate", userLat +"," + userLon);
                     context.startActivity(intent);
                 }
-                /*
-               @Override
-               public void onClick(View view) {
-                   if (holder.textView4.getVisibility()==View.GONE){
-                       TransitionManager.beginDelayedTransition(holder.cardViewNews, new AutoTransition());
-                       holder.textView2.setVisibility(View.VISIBLE);
-                       holder.textView4.setVisibility(View.VISIBLE);
-                       holder.dividerTop.setVisibility(View.VISIBLE);
-                   } else {
-                       //TransitionManager.beginDelayedTransition(holder.cardViewNews, new AutoTransition());
-                       holder.textView2.setVisibility(View.GONE);
-                       holder.textView4.setVisibility(View.GONE);
-                       holder.dividerTop.setVisibility(View.GONE);
-                   }
-               }
-
-
-           });
-           //endregion
-
- */
-
-
-           //region Press Button to goto Map
-           holder.buttonViewMap.setOnClickListener(new View.OnClickListener() {
-               @Override
-               public void onClick(View view) {
-                   Context context = view.getContext();
-                   Intent intent = new Intent(context, NewsLocationActivity.class);
-                   // Passing values
-                   intent.putExtra("lat",lat);
-                   intent.putExtra("lon",lon);
-                   intent.putExtra("title",title);
-                   intent.putExtra("date",date);
-                   intent.putExtra("snips",snips);
-                   intent.putExtra("url",url);
-                   intent.putExtra("userLat",userLat);
-                   intent.putExtra("userLon",userLon);
-                   Log.i("User Coordinate", userLat +"," + userLon);
-                   context.startActivity(intent);
-               }
-           });
-           //endregion
-
+            });
+            //endregion
 
         } catch (JSONException e) {
             e.printStackTrace();

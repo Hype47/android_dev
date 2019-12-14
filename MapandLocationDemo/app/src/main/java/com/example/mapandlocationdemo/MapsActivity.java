@@ -128,15 +128,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         };
 
-        /*
         // Checking if User has granted permission to access their location --> If user denies access to location
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION},1);
         } else {
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0,locationListener);
         }
-
-         */
 
 
         // Checking User Permission for their location

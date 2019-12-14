@@ -47,6 +47,9 @@ public class Frag2 extends Fragment {
     private View rootView;
     private LocationManager locationManager;
     private LocationListener locationListener;
+    private String endPoint = "https://news-geocode.herokuapp.com/promo_coord/";
+    private int radiusKm = 10;
+    private Location coord;
     //Button button;
     //CardView cardView;
     //TextView textView;
@@ -72,9 +75,10 @@ public class Frag2 extends Fragment {
                     data = reader.read();
                 }
                 return result;
-
             } catch (Exception e){
                 e.printStackTrace();
+//                Snackbar.make(getView(), "No events found for this location...", Snackbar.LENGTH_LONG)
+//                        .setAction("Action", null).show();
                 return null;
             }
         }
@@ -170,9 +174,13 @@ public class Frag2 extends Fragment {
         // 5. set item animator to DefaultAnimator
         recyclerView.setItemAnimator(new DefaultItemAnimator());
 
+        Frag2.DownloadTask task = new Frag2.DownloadTask();
+        coord = getGPS();
+        task.execute(endPoint + coord.getLatitude() + "," + coord.getLongitude() + "," + radiusKm);
+        Log.i("EndPoint",endPoint + coord.getLatitude() + "," + coord.getLongitude() + "," + radiusKm);
+
         //region Floating Button
         FloatingActionButton fab = rootView.findViewById(R.id.floatingPromoRefresh);
-        //final Location coord = getGPS();
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -180,13 +188,7 @@ public class Frag2 extends Fragment {
                         .setAction("Action", null).show();
 
                 Frag2.DownloadTask task = new Frag2.DownloadTask();
-                //String endPoint = "https://news-geocode.herokuapp.com/promo";
-                //task.execute(endPoint);
-                //Log.i("endpoint", endPoint);
-
-                Location coord = getGPS();
-                int radiusKm = 10;
-                String endPoint = "https://news-geocode.herokuapp.com/promo_coord/";
+                coord = getGPS();
                 task.execute(endPoint + coord.getLatitude() + "," + coord.getLongitude() + "," + radiusKm);
                 Log.i("EndPoint",endPoint + coord.getLatitude() + "," + coord.getLongitude() + "," + radiusKm);
             }
