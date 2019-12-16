@@ -10,14 +10,16 @@
         android:id="@+id/toolbarMainActivity"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="?attr/colorPrimary"
+        android:background="@color/colorAccent"
         android:longClickable="false"
         android:minHeight="?attr/actionBarSize"
         android:theme="?attr/actionBarTheme"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:navigationIcon="@android:drawable/ic_input_add"
-        app:title="@string/app_name" />
+        app:title="@string/app_name"
+        app:titleMargin="4dp"
+        app:titleTextColor="@color/common_google_signin_btn_text_dark_pressed" />
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tabs"
@@ -25,7 +27,7 @@
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/toolbarMainActivity"
-        app:tabMode="scrollable" />
+        app:tabMode="fixed" />
 
     <androidx.viewpager.widget.ViewPager
         android:id="@+id/view_pager"

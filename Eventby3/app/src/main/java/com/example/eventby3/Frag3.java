@@ -1,30 +1,27 @@
 package com.example.eventby3;
 
-import android.Manifest;
-import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.wifi.p2p.WifiP2pManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -32,10 +29,7 @@ import org.json.JSONObject;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.Inet4Address;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 
 /*
     Fragment for Neighborhood Tab
@@ -45,28 +39,11 @@ public class Frag3 extends Fragment {
 
     // Variable declarations
     private View rootView;
-    private LocationManager locationManager;
-    private LocationListener locationListener;
 
     // Location variables should be retrieved from user settings
     public static double userLat = -6.2162781; // Taman Rasuna
     public static double userLon = 106.8350133;
     private int radiusKm = 10;
-/*
-    //region Checking if user is giving access to location
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
-        if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            if (ContextCompat.checkSelfPermission(this.getContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0,locationListener);
-            }
-        }
-    }
-    //endregion
-
- */
 
 
     //region Read JSON File - Don't forget to give internet permission
@@ -149,117 +126,82 @@ public class Frag3 extends Fragment {
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull final LayoutInflater inflater, @Nullable final ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-//        this.userLat = -6.2162781; // Taman Rasuna
-//        this.userLon = 106.8350133;
+        String msg = "Credentials: " + UserSignInActivity.jwtToken + "_" + UserSignInActivity.loginName;
+        Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
 
-        // Retrieving Views in Fragments
-        rootView = inflater.inflate(R.layout.frag3_layout, container, false);
+        if (UserSignInActivity.jwtToken != null && UserSignInActivity.loginName != null) {
 
+            // Retrieving Views in Fragments
+            rootView = inflater.inflate(R.layout.frag3_layout, container, false);
 
-        /*//region Dummy data for testing
-        // data to populate the RecyclerView with
-        ArrayList<String> listData = new ArrayList<>();
-        listData.add("Horse");
-        listData.add("Cow");
-        listData.add("Camel");
-        listData.add("Sheep");
-        listData.add("Goat");
-        listData.add("Dog");
-        listData.add("Cat");
-        listData.add("Pig");
-        listData.add("Crocodile");
-        listData.add("Turtle");
-        //endregion*/
+            JSONArray listData = new JSONArray();
 
+            // 1. get a reference to recyclerView
+            RecyclerView recyclerView = rootView.findViewById(R.id.recyclerViewNeighborhood);
 
-        JSONArray listData = new JSONArray();
+            // 2. set layoutManager
+            recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        // 1. get a reference to recyclerView
-        RecyclerView recyclerView = rootView.findViewById(R.id.recyclerViewNeighborhood);
+            // 3. create an adapter
+            MyNeighborhoodAdapter mAdapter = new MyNeighborhoodAdapter(getActivity(), listData, Frag3.this);
+            //MyAdapter mAdapter = new MyAdapter(getContext(), listData, Frag1.this);
 
-        // 2. set layoutManager
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+            // 4. set adapter
+            recyclerView.setAdapter(mAdapter);
 
-        // 3. create an adapter
-        MyNeighborhoodAdapter mAdapter = new MyNeighborhoodAdapter(getActivity(), listData, Frag3.this);
-        //MyAdapter mAdapter = new MyAdapter(getContext(), listData, Frag1.this);
+            // 5. set item animator to DefaultAnimator
+            recyclerView.setItemAnimator(new DefaultItemAnimator());
 
-        // 4. set adapter
-        recyclerView.setAdapter(mAdapter);
+            DownloadTask task = new DownloadTask();
+            String endPoint = "https://news-geocode.herokuapp.com/neighborhood_coord/";
+            task.execute(endPoint + userLat + "," + userLon + "," + radiusKm);
+            Log.i("EndPoint",endPoint + userLat + "," + userLon + "," + radiusKm);
 
-        // 5. set item animator to DefaultAnimator
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
+            //region Floating Button : Move to create post screen
+            FloatingActionButton fab = rootView.findViewById(R.id.floatingCreatePost);
+            fab.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(getContext(), CreatePostActivity.class);
+                    getContext().startActivity(intent);
+                }
+            });
+            //endregion
 
-        DownloadTask task = new DownloadTask();
-        String endPoint = "https://news-geocode.herokuapp.com/neighborhood_coord/";
-        task.execute(endPoint + userLat + "," + userLon + "," + radiusKm);
-        Log.i("EndPoint",endPoint + userLat + "," + userLon + "," + radiusKm);
+            return rootView;
 
+        } else {
+            // Retrieving Views in Fragments --> if No sign In detected
+            rootView = inflater.inflate(R.layout.frag3nouser_layout, container, false);
 
-        //region Floating Button : Move to create post screen
-        FloatingActionButton fab = rootView.findViewById(R.id.floatingCreatePost);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-//                Snackbar.make(view, "Retrieving local news...", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
+            // Access to Buttons
+            Button buttonLogin = rootView.findViewById(R.id.buttonFrag3Login);
+            Button buttonSignUp = rootView.findViewById(R.id.buttonFrag3SignUp);
 
-                Intent intent = new Intent(getContext(), CreatePostActivity.class);
-                getContext().startActivity(intent);
-            }
-        });
-        //endregion
+            // Login Codes
+            buttonLogin.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(getContext(), UserSignInActivity.class);
+                    getContext().startActivity(intent);
+
+                }
+            });
+
+            // Sign Up Codes
+            buttonSignUp.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(getContext(), UserRegistrationActivity.class);
+                    getContext().startActivity(intent);
+                }
+            });
+        }
 
         return rootView;
     }
-
-    /*// Getting adHoc user Locations
-    public Location getGPS() {
-        LocationManager locationManager = (LocationManager) Frag3.this.getContext().getSystemService(Context.LOCATION_SERVICE);
-        List<String> providers = locationManager.getProviders(true);
-
-        locationListener = new LocationListener() {
-            @Override
-            public void onLocationChanged(Location location) {
-
-            }
-
-            @Override
-            public void onStatusChanged(String s, int i, Bundle bundle) {
-
-            }
-
-            @Override
-            public void onProviderEnabled(String s) {
-
-            }
-
-            @Override
-            public void onProviderDisabled(String s) {
-
-            }
-        };
-
-        // Checking if User has granted permission to access their location --> If user denies access to location
-        if (ContextCompat.checkSelfPermission(this.getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this.getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION},1);
-        } else {
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0,locationListener);
-        }
-
-        *//* Loop over the array backwards, and if you get an accurate location, then break out the loop*//*
-        Location gps = null;
-
-        for (int i=providers.size()-1; i>=0; i--) {
-            gps = locationManager.getLastKnownLocation(providers.get(i));
-            if (gps != null) break;
-        }
-
-        return gps;
-    }*/
-
 
     public double getLat(){
         return this.userLat;
@@ -268,4 +210,5 @@ public class Frag3 extends Fragment {
     public double getLon(){
         return this.userLon;
     }
+
 }

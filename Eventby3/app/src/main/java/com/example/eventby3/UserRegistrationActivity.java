@@ -52,6 +52,8 @@ import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -67,6 +69,9 @@ public class UserRegistrationActivity extends AppCompatActivity implements OnMap
     LocationListener locationListener;
     private String url = "https://maps.googleapis.com/maps/api/geocode/json?address=";
     private String apiKey = "&key=AIzaSyBLa3dlf8IME79rwvWRB5L9oxgMrCtySro";
+    private double lon;
+    private double lat;
+
 
     //region Read JSON File - Don't forget to give internet permission (Google GeoCoder API)
     public class DownloadTask extends AsyncTask<String,Void,String> {
@@ -112,8 +117,8 @@ public class UserRegistrationActivity extends AppCompatActivity implements OnMap
                 JSONObject jsonObject1 = new JSONObject(geometry);
                 String location = jsonObject1.getString("location");
                 JSONObject jsonObject2 = new JSONObject(location);
-                double lat = jsonObject2.getDouble("lat");
-                double lon = jsonObject2.getDouble("lng");
+                lat = jsonObject2.getDouble("lat");
+                lon = jsonObject2.getDouble("lng");
                 Toast.makeText(getApplicationContext(),"Lat: " + lat + ", " + "Lon: " + lon, Toast.LENGTH_LONG).show();
                 Log.i("Default Coordinate",lat + "," + lon);
                 coordDefault = new LatLng(lat,lon);
@@ -185,7 +190,6 @@ public class UserRegistrationActivity extends AppCompatActivity implements OnMap
             }
         }
         });
-//
         // Part of Code to display Map
         Bundle mapViewBundle = null;
         if (savedInstanceState != null) {
@@ -195,6 +199,84 @@ public class UserRegistrationActivity extends AppCompatActivity implements OnMap
         mapView = findViewById(R.id.mapViewDefault);
         mapView.onCreate(mapViewBundle);
         mapView.getMapAsync(this);
+
+        // Send data to API
+        Button buttonRegister = findViewById(R.id.buttonUserSignUp);
+        buttonRegister.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                // Accessing editTexts
+                EditText editName = findViewById(R.id.editTextName);
+                EditText editEmail = findViewById(R.id.editTextEmail);
+                EditText editPass = findViewById(R.id.editTextPassword);
+
+                // Current date
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                String currentDateTime = dateFormat.format(new Date());
+
+                try {
+                    RequestQueue requestQueue = Volley.newRequestQueue(UserRegistrationActivity.this);
+
+                    String URL = "https://news-geocode.herokuapp.com/register";
+
+                    JSONObject jsonBody = new JSONObject();
+                    jsonBody.put("screenName", editName.getText().toString());
+                    jsonBody.put("username", editEmail.getText().toString());
+                    jsonBody.put("password", editPass.getText().toString());
+                    jsonBody.put("timestamp", currentDateTime);
+                    jsonBody.put("defaultLat", lat);
+                    jsonBody.put("defaultLon", lon);
+
+
+                    final String requestBody = jsonBody.toString();
+
+                    StringRequest stringRequest = new StringRequest(com.android.volley.Request.Method.POST,URL, new com.android.volley.Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
+                            Log.i("VOLLEY", response);
+                            Toast.makeText(getApplicationContext(),response,Toast.LENGTH_LONG).show();
+                        }
+                    }, new com.android.volley.Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            Log.e("VOLLEY", error.toString());
+                            Toast.makeText(getApplicationContext(),error.toString(),Toast.LENGTH_LONG).show();
+                        }
+                    }) {
+                        @Override
+                        public String getBodyContentType() {
+                            return "application/json; charset=utf-8";
+                        }
+
+                        @Override
+                        public byte[] getBody() throws AuthFailureError {
+                            try {
+                                return requestBody == null ? null : requestBody.getBytes("utf-8");
+                            } catch (UnsupportedEncodingException uee) {
+                                VolleyLog.wtf("Unsupported Encoding while trying to get the bytes of %s using %s", requestBody, "utf-8");
+                                return null;
+                            }
+                        }
+
+//                        @Override
+//                        protected Response<String> parseNetworkResponse(NetworkResponse response) {
+//                            String responseString = "";
+//                            if (response != null) {
+//                                responseString = String.valueOf(response.statusCode);
+//                                // can get more details such as response.headers
+//                            }
+//                            return Response.success(responseString, HttpHeaderParser.parseCacheHeaders(response));
+//                        }
+                    };
+
+                    requestQueue.add(stringRequest);
+                    finish();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
 
     }
 
@@ -288,13 +370,6 @@ public class UserRegistrationActivity extends AppCompatActivity implements OnMap
             gmap.moveCamera(CameraUpdateFactory.newLatLng(place));
             newsMarker.showInfoWindow();
         }
-
-//        gmap.clear();
-//        newsMarker = gmap.addMarker(new MarkerOptions()
-//                .position(place).title("Your last known location")
-//                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
-//        gmap.moveCamera(CameraUpdateFactory.newLatLng(place));
-//        newsMarker.showInfoWindow();
     }
 }
 

@@ -1,6 +1,7 @@
 package com.example.eventby3;
 
 import android.content.Context;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
@@ -52,6 +53,6 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
     @Override
     public int getCount() {
         // Show  total pages.
-        return 4;
+        return 3;
     }
 }

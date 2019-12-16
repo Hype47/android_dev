@@ -1,6 +1,7 @@
 package com.example.eventby3;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 
 import android.content.Context;
 import android.content.Intent;
@@ -19,6 +20,7 @@ import com.android.volley.toolbox.HttpResponse;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.android.material.tabs.TabLayout;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -28,7 +30,9 @@ import java.io.UnsupportedEncodingException;
 public class UserSignInActivity extends AppCompatActivity {
 
     // Variable declaration
-    public static String tokenChar;
+    public static String jwtToken;
+    public static String loginName;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,9 +83,19 @@ public class UserSignInActivity extends AppCompatActivity {
                             Log.i("VOLLEY", response);
                             try {
                                 JSONObject jsonObject = new JSONObject(response);
-                                tokenChar = jsonObject.getString("access_token");
-                                Toast.makeText(UserSignInActivity.this,tokenChar,Toast.LENGTH_LONG).show();
-                                Log.i("TOKEN", tokenChar);
+
+                                // Storing credentials
+                                jwtToken = jsonObject.getString("access_token");
+                                loginName = editEmail.getText().toString();
+
+                                // System messages
+                                Toast.makeText(UserSignInActivity.this,"Log in successful...",Toast.LENGTH_LONG).show();
+                                Log.i("Log in Successful", loginName + "_" + jwtToken );
+
+                                Context context = view.getContext();
+                                Intent intent = new Intent(context, MainActivity.class);
+                                context.startActivity(intent);
+
                             } catch (Exception e){
                                 e.printStackTrace();
                             }
@@ -120,8 +134,6 @@ public class UserSignInActivity extends AppCompatActivity {
                     };
 
                     requestQueue.add(stringRequest);
-//                    Log.i("New Post","is Saved");
-                    finish();
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -130,6 +142,5 @@ public class UserSignInActivity extends AppCompatActivity {
         });
 
     }
-
 
 }
