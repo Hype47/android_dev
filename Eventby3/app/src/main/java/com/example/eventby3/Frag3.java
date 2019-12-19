@@ -21,6 +21,16 @@ import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.NetworkResponse;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.VolleyLog;
+import com.android.volley.toolbox.HttpHeaderParser;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.json.JSONArray;
@@ -28,8 +38,11 @@ import org.json.JSONObject;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 
 /*
     Fragment for Neighborhood Tab
@@ -41,8 +54,10 @@ public class Frag3 extends Fragment {
     private View rootView;
 
     // Location variables should be retrieved from user settings
-    public static double userLat = -6.2162781; // Taman Rasuna
-    public static double userLon = 106.8350133;
+    public static double userLat;
+    public static double userLon;
+    public static String screenName;
+    public static String userid;
     private int radiusKm = 10;
 
 
@@ -70,8 +85,6 @@ public class Frag3 extends Fragment {
 
             } catch (Exception e){
                 e.printStackTrace();
-//                Snackbar.make(getView(), "No stories found for this location...", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
                 return null;
             }
         }
@@ -97,18 +110,6 @@ public class Frag3 extends Fragment {
                 // 3. create an adapter
                 MyNeighborhoodAdapter mAdapter = new MyNeighborhoodAdapter(getActivity(),arr,Frag3.this);
 
-
-                /*ArrayList<String> arr2 = new ArrayList<>();
-                arr2.add("Mark");
-                arr2.add("Tony");
-                arr2.add("Peter");
-                arr2.add("Bruce");
-                arr2.add("Thor");
-                arr2.add("Natasya");
-                arr2.add("Stephen");
-                MyAdapter mAdapter = new MyAdapter(getContext(), arr2);*/
-
-
                 // 4. set adapter
                 recyclerView.setAdapter(mAdapter);
 
@@ -133,6 +134,63 @@ public class Frag3 extends Fragment {
 
         if (UserSignInActivity.jwtToken != null && UserSignInActivity.loginName != null) {
 
+            try{
+                RequestQueue queue = Volley.newRequestQueue(getContext());
+                String URL = "https://news-geocode.herokuapp.com/userlogin/" + UserSignInActivity.loginName;
+                Log.i("URL Request",URL);
+
+                StringRequest request = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Log.e("User Information", response);
+                        try {
+
+                            JSONObject jsonObject = new JSONObject(response);
+
+                            // Fetching information
+                            userLat = jsonObject.getDouble("defaultLat");
+                            userLon = jsonObject.getDouble("defaultLon");
+                            screenName = jsonObject.getString("screenName");
+                            userid = jsonObject.getString("userid");
+                            Log.e("User Location",userLat + "," + userLon);
+
+                            // Modify Toolbar on Main Activity
+                            MainActivity.toolbar.setTitle("Hi " + screenName);
+                            MainActivity.toolbar.setNavigationIcon(R.drawable.ic_account_edit);
+
+                            // Connecting to API
+                            DownloadTask task = new DownloadTask();
+                            String endPoint = "https://news-geocode.herokuapp.com/neighborhood_coord/";
+                            task.execute(endPoint + userLat + "," + userLon + "," + radiusKm);
+                            Log.e("EndPoint",endPoint + userLat + "," + userLon + "," + radiusKm);
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.e("error is ", "" + error);
+                    }
+                }) {
+
+                    //This is for Headers If You Needed --> Authorization JWT
+                    @Override
+                    public Map<String, String> getHeaders() throws AuthFailureError {
+                        Map<String, String> params = new HashMap<String, String>();
+                        params.put("Authorization", "JWT " + UserSignInActivity.jwtToken);
+                        Log.e("Params",params.toString());
+                        return params;
+                    }
+                };
+                queue.add(request);
+
+            } catch (Exception e){
+                e.printStackTrace();
+            }
+
             // Retrieving Views in Fragments
             rootView = inflater.inflate(R.layout.frag3_layout, container, false);
 
@@ -153,11 +211,6 @@ public class Frag3 extends Fragment {
 
             // 5. set item animator to DefaultAnimator
             recyclerView.setItemAnimator(new DefaultItemAnimator());
-
-            DownloadTask task = new DownloadTask();
-            String endPoint = "https://news-geocode.herokuapp.com/neighborhood_coord/";
-            task.execute(endPoint + userLat + "," + userLon + "," + radiusKm);
-            Log.i("EndPoint",endPoint + userLat + "," + userLon + "," + radiusKm);
 
             //region Floating Button : Move to create post screen
             FloatingActionButton fab = rootView.findViewById(R.id.floatingCreatePost);

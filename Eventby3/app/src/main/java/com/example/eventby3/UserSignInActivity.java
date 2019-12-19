@@ -11,6 +11,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+//import android.widget.Toolbar;
+import  androidx.appcompat.widget.Toolbar;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.RequestQueue;
@@ -38,6 +40,10 @@ public class UserSignInActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_sign_in);
+
+        // Access to toolbar
+        Toolbar toolbar = findViewById(R.id.toolbarSignIn);
+        toolbar.setTitle("Log in to " + getString(R.string.app_name));
 
         // Get Access to the fields
         final EditText editEmail = findViewById(R.id.editSignInEmail);

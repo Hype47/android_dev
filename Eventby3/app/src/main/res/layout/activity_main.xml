@@ -16,7 +16,6 @@
         android:theme="?attr/actionBarTheme"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:navigationIcon="@android:drawable/ic_input_add"
         app:title="@string/app_name"
         app:titleMargin="4dp"
         app:titleTextColor="@color/common_google_signin_btn_text_dark_pressed" />

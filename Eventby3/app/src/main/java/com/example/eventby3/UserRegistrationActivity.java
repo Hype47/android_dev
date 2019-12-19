@@ -67,8 +67,8 @@ public class UserRegistrationActivity extends AppCompatActivity implements OnMap
     LatLng coordDefault;
     LocationManager locationManager;
     LocationListener locationListener;
-    private String url = "https://maps.googleapis.com/maps/api/geocode/json?address=";
-    private String apiKey = "&key=AIzaSyBLa3dlf8IME79rwvWRB5L9oxgMrCtySro";
+    public static String url = "https://maps.googleapis.com/maps/api/geocode/json?address=";
+    public static String apiKey = "&key=AIzaSyBLa3dlf8IME79rwvWRB5L9oxgMrCtySro";
     private double lon;
     private double lat;
 

@@ -52,8 +52,6 @@ public class NewsLocationActivity extends AppCompatActivity implements OnMapRead
     String date;
     Marker newsMarker;
     String url;
-
-
     private static final String MAP_VIEW_BUNDLE_KEY = "MapViewBundleKey";
 
     @Override
@@ -72,7 +70,6 @@ public class NewsLocationActivity extends AppCompatActivity implements OnMapRead
         userLat = intent.getDoubleExtra("userLat",0);
         userLon = intent.getDoubleExtra("userLon",0);
 
-
         // Card init
         TextView textTitle = findViewById(R.id.textEventTitle);
         textTitle.setText(title);
@@ -80,20 +77,6 @@ public class NewsLocationActivity extends AppCompatActivity implements OnMapRead
         textDate.setText(date);
         TextView textSnips = findViewById(R.id.textEventSnips);
         textSnips.setText(snips);
-
-        /*
-        // Card expanding
-        final CardView cardView = findViewById(R.id.cardViewText);
-        cardView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                cardView.getLayoutParams().height = ViewGroup.LayoutParams.WRAP_CONTENT;
-                cardView.requestLayout();
-                textViewSnips.setVisibility(View.VISIBLE);
-            }
-        });
-
-         */
 
         // Read More button --> go to url
         Button buttonReadMore = findViewById(R.id.buttonReadMore);
@@ -174,7 +157,6 @@ public class NewsLocationActivity extends AppCompatActivity implements OnMapRead
     public void onMapReady(GoogleMap googleMap) {
         gmap = googleMap;
         gmap.setMinZoomPreference(15);
-        //LatLng place = new LatLng(40.7143528, -74.0059731);
         LatLng place = new LatLng(lat,lon);
         LatLng userPlace = new LatLng(userLat,userLon);
 

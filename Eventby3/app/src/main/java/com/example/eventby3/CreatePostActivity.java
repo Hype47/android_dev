@@ -1,6 +1,5 @@
 package com.example.eventby3;
 
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -20,14 +19,13 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toolbar;
+//import android.widget.Toolbar;
+import androidx.appcompat.widget.Toolbar;
 
 import com.android.volley.AuthFailureError;
-//import com.android.volley.NetworkResponse;
 import com.android.volley.RequestQueue;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
-//import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -39,7 +37,6 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
-//import com.google.android.gms.common.api.Response;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -126,7 +123,7 @@ public class CreatePostActivity extends AppCompatActivity implements OnMapReadyC
                     String URL = "https://news-geocode.herokuapp.com/create";
 
                     JSONObject jsonBody = new JSONObject();
-                    jsonBody.put("createdBy", "AndroidApp");
+                    jsonBody.put("createdBy", "AndroidApp" + "_" + Frag3.screenName);
                     jsonBody.put("timestamp", currentDateTime);
                     jsonBody.put("title", editPostTitle.getText().toString() + " " + currentDateTime);
                     jsonBody.put("content", editPostContent.getText().toString());

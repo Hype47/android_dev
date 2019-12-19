@@ -1,18 +1,15 @@
 <resources>
-    <string name="app_name">Eventhood</string>
+    <string name="app_name">Drophood</string>
 
     <!-- Tab Names -->
     <string name="tab_text_1">News</string>
     <string name="tab_text_2">Marketplace</string>
     <string name="tab_text_3">Event</string>
     <string name="tab_text_4">Neighborhood</string>
-    <string name="tab_text_5">Alerts</string>
 
     <!-- Tabs -->
     <string name="button_text_1">Go To Location</string>
-    <string name="button_text_1A">Collapse</string>
     <string name="button_text_2">Read More</string>
-    <string name="button_refresh">Refresh</string>
 
     <!-- Map Activities -->
     <string name="button_read_more">Read More</string>
@@ -21,18 +18,14 @@
     <string name="button_other_events">Other Events</string>
 
     <!-- Create Post Screen -->
-    <string name="post_bar_title">Create Story</string>
+    <string name="post_bar_title">Create Your Story</string>
     <string name="post_button_post">Post</string>
     <string name="post_button_clear">Clear</string>
     <string name="post_button_cancel">Cancel</string>
-    <string name="chip_current_loc">Current Location</string>
-    <string name="chip_default_loc">Default Location</string>
-    <string name="chip_private">Private</string>
     <string name="chip_neighborhood">Neighborhood</string>
     <string name="chip_public">Public</string>
 
     <!-- User Registration Screen -->
-    <string name="register_bar_title">User Registration</string>
     <string name="btn_signup">Sign Up</string>
 
     <!-- User Login Screen -->
@@ -40,40 +33,15 @@
     <string name="email_input_hint">Registered email</string>
     <string name="password_input_hint">Password</string>
     <string name="login_button_label">Login</string>
-    <string name="cancel_button_label">Cancel</string>
     <string name="to_registration_label">Sign Up</string>
+
+    <!-- User Profile Screen -->
+    <string name="logout_button">Log Out</string>
+    <string name="edit_profile">Edit</string>
+    <string name="save_button">Save</string>
 
 
     <!-- Dummy Contents -->
-    <string name="text_content_dummy">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-        Ut enim ad minim veniam, quis nostrud exercitationullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
-        velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</string>
-    <string name="text_content_dummy_long">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
-        magna aliqua. In hac habitasse platea dictumst vestibulum rhoncus est pellentesque. Tempor orci dapibus ultrices in iaculis. Ut eu sem integer
-        vitae justo eget magna fermentum iaculis. Facilisis mauris sit amet massa vitae tortor condimentum. Pharetra sit amet aliquam id. Laoreet
-        suspendisse interdum consectetur libero id faucibus. Arcu cursus euismod quis viverra nibh cras pulvinar mattis. Dictum non consectetur a erat
-        nam. Enim diam vulputate ut pharetra sit amet aliquam. Elementum nibh tellus molestie nunc non blandit massa. Pellentesque id nibh tortor id
-        aliquet lectus proin nibh nisl. Nisl purus in mollis nunc sed. Neque convallis a cras semper. Aenean et tortor at risus viverra adipiscing.
-        Nisi quis eleifend quam adipiscing vitae proin. \n\nEget aliquet nibh praesent tristique magna sit amet purus gravida. Auctor eu augue ut lectus
-        arcu bibendum at. Vitae tempus quam pellentesque nec nam aliquam sem et. Leo integer malesuada nunc vel risus commodo. Egestas integer eget
-        aliquet nibh praesent. Amet mattis vulputate enim nulla aliquet porttitor lacus. Nisl nisi scelerisque eu ultrices vitae. Enim blandit volutpat
-        maecenas volutpat blandit. Tortor vitae purus faucibus ornare suspendisse sed nisi. Mattis rhoncus urna neque viverra. Nunc consequat interdum
-        varius sit amet mattis. Natoque penatibus et magnis dis parturient montes nascetur ridiculus mus. Nulla facilisi etiam dignissim diam.
-        Amet tellus cras adipiscing enim eu turpis. Mauris in aliquam sem fringilla ut morbi tincidunt. Nunc congue nisi vitae suscipit tellus.
-        Ultrices sagittis orci a scelerisque purus semper. \n\nLectus nulla at volutpat diam ut venenatis tellus in. Tristique nulla aliquet enim tortor at
-        auctor. Adipiscing enim eu turpis egestas pretium aenean pharetra. Dignissim cras tincidunt lobortis feugiat. Cras tincidunt lobortis feugiat
-        vivamus at augue eget arcu. Iaculis urna id volutpat lacus. Eu scelerisque felis imperdiet proin fermentum leo vel orci. Senectus et netus et
-        malesuada fames ac turpis. Faucibus pulvinar elementum integer enim neque volutpat ac. Id donec ultrices tincidunt arcu non sodales neque
-        sodales.  Luctus accumsan tortor posuere ac ut consequat semper viverra nam. Parturient montes nascetur ridiculus mus mauris vitae ultricies
-        leo integer. Neque viverra justo nec ultrices dui sapien eget mi. Leo vel orci porta non pulvinar. Ultrices neque ornare aenean euismod
-        elementum nisi quis. Sed sed risus pretium quam vulputate dignissim suspendisse in. Diam sollicitudin tempor id eu nisl nunc mi ipsum. Lorem
-        sed risus ultricies tristique. Euismod elementum nisi quis eleifend quam adipiscing vitae. Maecenas accumsan lacus vel facilisis volutpat est
-        velit. Id aliquet risus feugiat in ante metus.  Et malesuada fames ac turpis egestas sed tempus. Euismod elementum nisi quis eleifend.
-        Adipiscing enim eu turpis egestas. Congue nisi vitae suscipit tellus mauris. \n\nVel pretium lectus quam id leo. Congue quisque egestas diam in
-        arcu cursus euismod quis viverra. Urna id volutpat lacus laoreet non curabitur gravida. Nullam eget felis eget nunc lobortis. Varius morbi
-        enim nunc faucibus a pellentesque sit amet. Aenean pharetra magna ac placerat. Congue eu consequat ac felis donec et odio pellentesque. Amet
-        mauris commodo quis imperdiet massa tincidunt nunc pulvinar. Sed augue lacus viverra vitae congue eu consequat ac felis. Nulla aliquet enim
-        tortor at auctor urna nunc id.</string>
 
 
 </resources>
