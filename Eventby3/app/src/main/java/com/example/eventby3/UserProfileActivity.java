@@ -228,7 +228,15 @@ public class UserProfileActivity extends AppCompatActivity implements OnMapReady
         buttonSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                saveAlertDialog();
+                String emailText = editEmail.getText().toString();
+                String nameText = editName.getText().toString();
+                String address = editLocation.getText().toString();
+                // Mandatory fields cannot be empty
+                if (emailText.matches("") | nameText.matches("") | address.matches("")){
+                    inputErrorDialog();
+                } else {
+                    saveAlertDialog();
+                }
             }
         });
 
@@ -329,15 +337,22 @@ public class UserProfileActivity extends AppCompatActivity implements OnMapReady
         alertDialogBuilder.setTitle("Update Profile");
         alertDialogBuilder.setMessage("Click Yes to confirm changes")
                 .setCancelable(true)
+                .setNegativeButton("No",new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog,int id) {
+                        // if this button is clicked, just close
+                        // the dialog box and do nothing
+                        dialog.cancel();
+                    }
+                })
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         try {
                             // Retrieving Data
-                            EditText editEmail = findViewById(R.id.editTextEditEmail);
-                            EditText editName = findViewById(R.id.editTextEditName);
+                            final EditText editEmail = findViewById(R.id.editTextEditEmail);
+                            final EditText editName = findViewById(R.id.editTextEditName);
                             EditText editLocation = findViewById(R.id.editTextEditLocation);
-                            String address = editLocation.getText().toString();
+                            final String address = editLocation.getText().toString();
 
                             // Init Volley
                             RequestQueue requestQueue = Volley.newRequestQueue(UserProfileActivity.this);
@@ -346,6 +361,8 @@ public class UserProfileActivity extends AppCompatActivity implements OnMapReady
                             jsonBody.put("userid", Frag3.userid);
                             jsonBody.put("screenName", editName.getText().toString());
                             jsonBody.put("username", editEmail.getText().toString());
+                            jsonBody.put("defaultLat", lat);
+                            jsonBody.put("defaultLon", lon);
                             if (address.matches("")){
                                 jsonBody.put("defaultLat", Frag3.userLat);
                                 jsonBody.put("defaultLon", Frag3.userLon);
@@ -365,37 +382,31 @@ public class UserProfileActivity extends AppCompatActivity implements OnMapReady
                                 public void onResponse(String response) {
                                     Log.e("VOLLEY", response);
 
-                                    //TODO: Update global userLon, UserLat, email and username in Frag3 and UserSignInActivity
-                                    //TODO: Give error message if the response is not successful
+                                    // Update the global variables with new profile
+                                    UserSignInActivity.loginName = editEmail.getText().toString();
+                                    Frag3.screenName = editName.getText().toString();
+                                    Frag3.userLat = lat;
+                                    Frag3.userLon = lon;
 
-                                    finish();
+                                    // Update MainActivity's toolbar
+                                    MainActivity.toolbar.setTitle("Hi " + Frag3.screenName);
 
+                                    // Success message
+                                    saveSuccessDialog();
 
-                                    /*try {
-                                        JSONObject jsonObject = new JSONObject(response);
-
-                                        // Getting response message
-                                        String msgResponse = jsonObject.getString("message");
-                                        if (msgResponse == "User profile is successfully updated") {
-                                            // System messages
-                                            Toast.makeText(UserProfileActivity.this,"User profile updated",Toast.LENGTH_LONG).show();
-                                            Log.e("User profile updated", requestBody );
-
-                                        } else {
-
-                                            // Alert dialog here
-
-                                        }
-
-                                    } catch (Exception e){
-                                        e.printStackTrace();
-                                    }*/
                                 }
                             }, new com.android.volley.Response.ErrorListener() {
                                 @Override
                                 public void onErrorResponse(VolleyError error) {
-                                    Log.e("VOLLEY", error.toString());
-//                                    Toast.makeText(UserSignInActivity.this, "Invalid username/password...",Toast.LENGTH_LONG).show();
+                                    Log.e("VOLLEY", "Cannot update profile " + error.toString());
+                                    // Error messages
+                                    saveErrorDialog();
+
+                                    /*if (emailText.matches("") | nameText.matches("")){
+                                        inputErrorDialog();
+                                    } else {
+                                        saveErrorDialog();
+                                    }*/
                                 }
                             }) {
                                 @Override
@@ -421,7 +432,61 @@ public class UserProfileActivity extends AppCompatActivity implements OnMapReady
                 });
 
         AlertDialog alertDialog = alertDialogBuilder.create();
-
         alertDialog.show();
     }
+
+    // Alert save success
+    public void saveSuccessDialog(){
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+        alertDialogBuilder.setMessage("Profile updated")
+                .setCancelable(false)
+                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+//                        finish();
+                        // Restart Main Activity
+                        Context context = UserProfileActivity.this;
+                        Intent intent = new Intent(context, MainActivity.class);
+                        context.startActivity(intent);
+                    }
+                });
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
+    }
+
+    // Alert save error
+    public void saveErrorDialog(){
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+        alertDialogBuilder.setTitle("Input Error");
+        alertDialogBuilder.setMessage("User is not found or email has been used by other user")
+                .setCancelable(false)
+                .setNegativeButton("Back",new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog,int id) {
+                        // if this button is clicked, just close
+                        // the dialog box and do nothing
+                        dialog.cancel();
+                    }
+                });
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
+    }
+
+    // Alert incomplete entry
+    public void inputErrorDialog(){
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+        alertDialogBuilder.setTitle("Input Error");
+        alertDialogBuilder.setMessage("The fields cannot be empty")
+                .setCancelable(false)
+                .setNegativeButton("Back",new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog,int id) {
+                        // if this button is clicked, just close
+                        // the dialog box and do nothing
+                        dialog.cancel();
+                    }
+                });
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
+    }
+
+
 }

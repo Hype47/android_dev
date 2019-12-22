@@ -10,6 +10,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.Animation;
+import android.view.animation.DecelerateInterpolator;
+import android.view.animation.ScaleAnimation;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -58,6 +62,7 @@ public class Frag3 extends Fragment {
     public static double userLon;
     public static String screenName;
     public static String userid;
+    public static FloatingActionButton fab;
     private int radiusKm = 10;
 
 
@@ -204,7 +209,6 @@ public class Frag3 extends Fragment {
 
             // 3. create an adapter
             MyNeighborhoodAdapter mAdapter = new MyNeighborhoodAdapter(getActivity(), listData, Frag3.this);
-            //MyAdapter mAdapter = new MyAdapter(getContext(), listData, Frag1.this);
 
             // 4. set adapter
             recyclerView.setAdapter(mAdapter);
@@ -213,7 +217,7 @@ public class Frag3 extends Fragment {
             recyclerView.setItemAnimator(new DefaultItemAnimator());
 
             //region Floating Button : Move to create post screen
-            FloatingActionButton fab = rootView.findViewById(R.id.floatingCreatePost);
+            fab = rootView.findViewById(R.id.floatingCreatePost);
             fab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -256,6 +260,7 @@ public class Frag3 extends Fragment {
         return rootView;
     }
 
+
     public double getLat(){
         return this.userLat;
     }
@@ -263,5 +268,7 @@ public class Frag3 extends Fragment {
     public double getLon(){
         return this.userLon;
     }
+
+
 
 }

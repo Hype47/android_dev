@@ -49,8 +49,8 @@
             app:backgroundTint="@color/colorAccent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:maxImageSize="48dp"
-            app:srcCompat="@android:drawable/ic_menu_mylocation" />
+            app:maxImageSize="24dp"
+            app:srcCompat="@drawable/ic_action_location" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -41,22 +41,8 @@
             android:focusable="true"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:maxImageSize="48dp"
-            app:srcCompat="@android:drawable/ic_menu_mylocation" />
+            app:maxImageSize="24dp"
+            app:srcCompat="@drawable/ic_action_location" />
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/floatingPromoCreate"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
-            android:layout_marginBottom="8dp"
-            android:backgroundTint="@color/colorPrimaryDark"
-            android:clickable="true"
-            android:focusable="true"
-            android:visibility="gone"
-            app:layout_constraintBottom_toTopOf="@+id/floatingPromoRefresh"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:maxImageSize="48dp"
-            app:srcCompat="@android:drawable/ic_input_add" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

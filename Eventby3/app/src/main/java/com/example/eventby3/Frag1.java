@@ -217,8 +217,6 @@ public class Frag1 extends Fragment {
                 } catch (Exception e) {
                     Log.i("Endpoint error",e.toString());
                 }
-
-
             }
         });
         //endregion
