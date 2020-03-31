@@ -1,7 +1,9 @@
 package com.example.hyperhype;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
@@ -9,6 +11,13 @@ import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -18,6 +27,8 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import android.os.Looper;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.view.Menu;
@@ -49,8 +60,13 @@ public class MainActivity extends AppCompatActivity {
     TextView locationText;
     ListView listViewNews;
 
+    private int PERMISSION_ID = 44;
+    private FusedLocationProviderClient mFusedLocationClient;
 
-    //region Checking if user is giving access to location
+    private SeekBar seekBarRadiusWidget;
+
+
+    /*//region Checking if user is giving access to location
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -61,7 +77,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
-    //endregion
+    //endregion*/
 
     //region Read JSON File - Dont forget to give internet permission
     public class DownloadTask extends AsyncTask<String,Void,String> {
@@ -146,7 +162,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         // Code for SeekBar
-        final SeekBar seekBarRadiusWidget;
+//        final SeekBar seekBarRadiusWidget;
         TextView textViewRadiusWidget = (TextView) findViewById(R.id.textViewRadius);
         seekBarRadiusWidget = findViewById(R.id.seekBarRadius);
 
@@ -199,7 +215,7 @@ public class MainActivity extends AppCompatActivity {
          */
         //endregion
 
-        //region Part of getting user Coordinates
+        /*//region Part of getting user Coordinates
         locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
         locationListener = new LocationListener() {
             @Override
@@ -235,10 +251,13 @@ public class MainActivity extends AppCompatActivity {
         } else {
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0,locationListener);
         }
-        //endregion
+        //endregion*/
+
+        // Location
+        locationText = findViewById(R.id.textViewLocation);
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        getLastLocation();
     }
-
-
 
 
     // Todo : Move to add entry activity
@@ -263,4 +282,101 @@ public class MainActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+    /* --- */
+    private boolean checkPermissions(){
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
+            return true;
+        }
+        return false;
+    }
+
+    private void requestPermissions(){
+        ActivityCompat.requestPermissions(
+                this,
+                new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION},
+                PERMISSION_ID
+        );
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == PERMISSION_ID) {
+            if(grantResults.length>0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                // Granted. Start getting the location information
+            }
+        }
+    }
+
+    private boolean isLocationEnabled(){
+        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || locationManager.isProviderEnabled(
+                LocationManager.NETWORK_PROVIDER
+        );
+    }
+
+    @SuppressLint("MissingPermission")
+    private void getLastLocation(){
+        if (checkPermissions()) {
+            if (isLocationEnabled()) {
+                mFusedLocationClient.getLastLocation().addOnCompleteListener(
+                        new OnCompleteListener<Location>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Location> task) {
+                                Location location = task.getResult();
+                                if (location == null) {
+                                    requestNewLocationData();
+                                } else {
+//                                    latTextView.setText(location.getLatitude()+"");
+//                                    lonTextView.setText(location.getLongitude()+"");
+                                    locationText.setText("Latitude: " + location.getLatitude() + "\r\n" + "Longitude: " + location.getLongitude());
+                                    DownloadTask downloadTask = new DownloadTask();
+                                    int radiusKm = seekBarRadiusWidget.getProgress();
+                                    String endPoint = "https://news-geocode.herokuapp.com/coordinate/";
+                                    downloadTask.execute(endPoint + location.getLatitude() + "," + location.getLongitude() + "," + radiusKm);
+                                }
+                            }
+                        }
+                );
+            } else {
+                Toast.makeText(this, "Turn on location", Toast.LENGTH_LONG).show();
+                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                startActivity(intent);
+            }
+        } else {
+            requestPermissions();
+        }
+    }
+
+    @SuppressLint("MissingPermission")
+    private void requestNewLocationData(){
+
+        LocationRequest mLocationRequest = new LocationRequest();
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        mLocationRequest.setInterval(0);
+        mLocationRequest.setFastestInterval(0);
+        mLocationRequest.setNumUpdates(1);
+
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        mFusedLocationClient.requestLocationUpdates(
+                mLocationRequest, mLocationCallback,
+                Looper.myLooper()
+        );
+    }
+
+    private LocationCallback mLocationCallback = new LocationCallback() {
+        @Override
+        public void onLocationResult(LocationResult locationResult) {
+            Location mLastLocation = locationResult.getLastLocation();
+//            latTextView.setText(mLastLocation.getLatitude()+"");
+//            lonTextView.setText(mLastLocation.getLongitude()+"");
+            locationText.setText("Latitude: " + mLastLocation.getLatitude() + "\r\n" + "Longitude: " + mLastLocation.getLongitude());
+            DownloadTask downloadTask = new DownloadTask();
+            int radiusKm = seekBarRadiusWidget.getProgress();
+            String endPoint = "https://news-geocode.herokuapp.com/coordinate/";
+            downloadTask.execute(endPoint + mLastLocation.getLatitude() + "," + mLastLocation.getLongitude() + "," + radiusKm);
+        }
+    };
 }
